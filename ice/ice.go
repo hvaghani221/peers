@@ -72,18 +72,16 @@ func main() {
 		panic(err)
 	}
 
-	index := 0
-	if os.Args[1] == "send" {
-		index = 1
-	}
-	rc, err := ice.UnmarshalCandidate(remoteCandidates.Candidates[index])
-	if err != nil {
-		panic(err)
-	}
+	for _, c := range remoteCandidates.Candidates {
+		rc, err := ice.UnmarshalCandidate(c)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Received request for: ")
+		if err := iceAgent.AddRemoteCandidate(rc); err != nil {
+			panic(err)
+		}
 
-	fmt.Println("Received request for: ")
-	if err := iceAgent.AddRemoteCandidate(rc); err != nil {
-		panic(err)
 	}
 
 	var exec func(*ice.Agent, string, string) error
